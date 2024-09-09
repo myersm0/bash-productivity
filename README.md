@@ -21,10 +21,12 @@ they provide several regex options as well. a few examples are below:
 # look ahead three levels deep but show only directories that contain txt files
 lookahead -d 3 -c "\.txt$"
 
-# out of the 100 most recently visited directories, show only the ones that have your current working directory as a prefix
+# out of the 100 most recently visited directories,
+# show only the ones that have your current working directory as a prefix
 cdr 100 -p
 
-# out of the 100 most recently visited directories, show only the ones that match a provided regex pattern
+# out of the 100 most recently visited directories,
+# show only the ones that match a provided regex pattern
 cdr 100 -r "my_regex"
 ```
 
