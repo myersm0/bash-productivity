@@ -1,55 +1,37 @@
 #!/bin/bash
 
-lookahead() {
-    local depth="1"  # Default depth
-    local regex="" file_regex="" dir IFS=$'\n' item
-
-    # Parse options
-    local options
-    options=$(parse_options "$@")
-    eval "$options"
-
-    # Validate depth
-    if ! [[ "$depth" =~ ^[0-9]+$ ]]; then
-        echo "Error: Depth must be a number."
-        echo "Usage: lookahead -d <depth> [-r <regex>] [-c <regex>]"
-        return 1
-    fi
-	 echo "depth is $depth"
-
-    # Recursively find directories up to the specified depth
-    for dir in $(find "$PWD" -maxdepth "$depth" -type d | sort); do
-        [ "$dir" = "$PWD" ] && continue
-
-        # Check if the directory name matches the regex (if provided)
-        if [ -n "$regex" ] && [[ ! "$dir" =~ $regex ]]; then
-            continue
-        fi
-
-        # Check if the directory contains files matching the content regex (if provided)
-        if [ -n "$file_regex" ]; then
-			  test=$(find "$dir" -maxdepth 1 -type f -printf "%f\n" | grep -iE "$file_regex" | wc -l)
-			  if [ $test -lt 1 ]; then
-                continue
-           fi
-		  fi
-
-        # Add to the list if it passed all filters
-        case ${item[*]} in
-            *"$dir:"*) ;; # Skip duplicates
-            *) item+=( "$dir:cd '$dir'" ) ;;
+# Function to parse options for filtering
+parse_options() {
+    local prefix="" prefix_elements regex file_regex depth="1"
+    while (( "$#" )); do
+        case "$1" in
+            -p)
+                prefix="$PWD"
+                ;;
+            -p*)
+                prefix_elements=$(echo "$PWD" | awk -v n="${1#-p}" -F'/' '{if (NF > n) { for (i=1; i<=n; i++) printf "%s/", $i; } else print $0;}')
+                ;;
+            -r)
+                regex="$2"
+                shift
+                ;;
+            -c)
+                file_regex="$2"
+                shift
+                ;;
+            -d)
+               depth="$2"
+                shift
+                ;;
+            *)
+                n="$1"
+                ;;
         esac
+        shift
     done
-
-    # Display the menu with the found directories
-    if [ ${#item[@]} -eq 0 ]; then
-        echo "No matching directories found."
-    else
-        menu2 "${item[@]}" quit:
-    fi
+	 eval "echo prefix='$prefix' prefix_elements='$prefix_elements' regex='$regex' file_regex='$file_regex' depth='$depth'"
 }
 
-# Function to display a menu for user selection
 menu2() {
     local IFS=$' \t\n' # Reset IFS to default setting
     local num n=1 opt item cmd
@@ -90,43 +72,52 @@ menu2() {
     fi
 }
 
+menu3() {
+    local IFS=$' \t\n' # Reset IFS to default setting
+    local num n=1 opt item cmd
+
+    # Print the menu options
+    for item; do
+        printf " %3d. %s\n" "$n" "${item%%:*}"
+        n=$((n + 1))
+    done
+
+    echo
+
+    # Read user input for selection
+    if [ $# -lt 10 ]; then
+        opt=-sn1
+    else
+        opt=
+    fi
+
+    read -p "Select a command to execute: " $opt num
+
+    case $num in
+        [qQ0] | "" ) return ;; # Quit on Q, q, 0, or empty input
+        *[!0-9]* | 0*)
+            printf "\aInvalid response: %s\n" "$num" >&2
+            return 1
+        ;;
+    esac
+
+    echo
+
+    # Execute the selected command if the number is valid
+    if [ "$num" -le "$#" ]; then
+        eval "history -s ${!num#*:}" # Add the selected command to the current session's history
+        echo "Command '${!num#*:}' added to the terminal. You can now execute it with modifications."
+    else
+        printf "\aInvalid response: %s\n" "$num" >&2
+        return 1
+    fi
+}
+
 # Function to add the current directory to the history file
-cdmh_add() {
+add_to_history() {
     local dir="$PWD"
     local history_file="$HOME/.cd_history"
     echo "$dir" >> "$history_file"
-}
-
-# Function to parse options for filtering
-parse_options() {
-    local prefix="" prefix_elements regex file_regex depth="1"
-    while (( "$#" )); do
-        case "$1" in
-            -p)
-                prefix="$PWD"
-                ;;
-            -p*)
-                prefix_elements=$(echo "$PWD" | awk -v n="${1#-p}" -F'/' '{if (NF > n) { for (i=1; i<=n; i++) printf "%s/", $i; } else print $0;}')
-                ;;
-            -r)
-                regex="$2"
-                shift
-                ;;
-            -c)
-                file_regex="$2"
-                shift
-                ;;
-            -d)
-               depth="$2"
-                shift
-                ;;
-            *)
-                n="$1"
-                ;;
-        esac
-        shift
-    done
-	 eval "echo prefix='$prefix' prefix_elements='$prefix_elements' regex='$regex' file_regex='$file_regex' depth='$depth'"
 }
 
 # Function to filter directories based on provided options
@@ -225,48 +216,55 @@ cdr() {
 
 # Override the cd command to automatically add to the history file
 cd() {
-    builtin cd "$@" && cdmh_add
+    builtin cd "$@" && add_to_history
 }
 
-# Function to display a menu for user selection
-menu3() {
-    local IFS=$' \t\n' # Reset IFS to default setting
-    local num n=1 opt item cmd
+lookahead() {
+    local depth="1"  # Default depth
+    local regex="" file_regex="" dir IFS=$'\n' item
 
-    # Print the menu options
-    for item; do
-        printf " %3d. %s\n" "$n" "${item%%:*}"
-        n=$((n + 1))
+    # Parse options
+    local options
+    options=$(parse_options "$@")
+    eval "$options"
+
+    # Validate depth
+    if ! [[ "$depth" =~ ^[0-9]+$ ]]; then
+        echo "Error: Depth must be a number."
+        echo "Usage: lookahead -d <depth> [-r <regex>] [-c <regex>]"
+        return 1
+    fi
+	 echo "depth is $depth"
+
+    # Recursively find directories up to the specified depth
+    for dir in $(find "$PWD" -maxdepth "$depth" -type d | sort); do
+        [ "$dir" = "$PWD" ] && continue
+
+        # Check if the directory name matches the regex (if provided)
+        if [ -n "$regex" ] && [[ ! "$dir" =~ $regex ]]; then
+            continue
+        fi
+
+        # Check if the directory contains files matching the content regex (if provided)
+        if [ -n "$file_regex" ]; then
+			  test=$(find "$dir" -maxdepth 1 -type f -printf "%f\n" | grep -iE "$file_regex" | wc -l)
+			  if [ $test -lt 1 ]; then
+                continue
+           fi
+		  fi
+
+        # Add to the list if it passed all filters
+        case ${item[*]} in
+            *"$dir:"*) ;; # Skip duplicates
+            *) item+=( "$dir:cd '$dir'" ) ;;
+        esac
     done
 
-    echo
-
-    # Read user input for selection
-    if [ $# -lt 10 ]; then
-        opt=-sn1
+    # Display the menu with the found directories
+    if [ ${#item[@]} -eq 0 ]; then
+        echo "No matching directories found."
     else
-        opt=
-    fi
-
-    read -p "Select a command to execute: " $opt num
-
-    case $num in
-        [qQ0] | "" ) return ;; # Quit on Q, q, 0, or empty input
-        *[!0-9]* | 0*)
-            printf "\aInvalid response: %s\n" "$num" >&2
-            return 1
-        ;;
-    esac
-
-    echo
-
-    # Execute the selected command if the number is valid
-    if [ "$num" -le "$#" ]; then
-        eval "history -s ${!num#*:}" # Add the selected command to the current session's history
-        echo "Command '${!num#*:}' added to the terminal. You can now execute it with modifications."
-    else
-        printf "\aInvalid response: %s\n" "$num" >&2
-        return 1
+        menu2 "${item[@]}" quit:
     fi
 }
 
@@ -302,3 +300,5 @@ lookbehind() {
         fi
     done
 }
+
+
