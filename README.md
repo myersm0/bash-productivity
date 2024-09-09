@@ -13,7 +13,7 @@ cdr
 cdf
 ```
 
- they all will present you a menu of cd options but you can select and automatically seedy into. ` look ahead` does so relative to whip your current location. `cdr` and `cdf`  do so relative to your history,  sorted by most recent  or by most frequent respectively.
+they all will present you a menu of cd options from which you can select and automatically cd into. ` look ahead` does so relative to your current location. `cdr` and `cdf` do so relative to your history, sorted either by most recent or by most frequent respectively.
 
- they provide several regex options as well which I will explain later
+they provide several regex options as well which I will explain later
 
