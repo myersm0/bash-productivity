@@ -174,7 +174,7 @@ cd() {
 	builtin cd "$@" && add_to_history
 }
 
-lookahead() {
+goahead() {
 	local depth="1"  # Default depth
 	local regex="" file_regex="" dir IFS=$'\n' item
 
@@ -186,7 +186,7 @@ lookahead() {
 	# Validate depth
 	if ! [[ "$depth" =~ ^[0-9]+$ ]]; then
 		echo "Error: Depth must be a number."
-		echo "Usage: lookahead -d <depth> [-r <regex>] [-c <regex>]"
+		echo "Usage: goahead -d <depth> [-r <regex>] [-c <regex>]"
 		return 1
 	fi
 	 echo "depth is $depth"
@@ -223,7 +223,7 @@ lookahead() {
 	fi
 }
 
-lookbehind() {
+gobehind() {
 	local current_dir="$PWD"
 	local parent_dir
 
