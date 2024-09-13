@@ -22,13 +22,17 @@ parse_options() {
 			   depth="$2"
 				shift
 				;;
+			-n)
+			   max_results="$2"
+				shift
+				;;
 			*)
 				n="$1"
 				;;
 		esac
 		shift
 	done
-	 eval "echo prefix='$prefix' prefix_elements='$prefix_elements' regex='$regex' file_regex='$file_regex' depth='$depth'"
+	eval "echo prefix='$prefix' prefix_elements='$prefix_elements' regex='$regex' file_regex='$file_regex' depth='$depth' max_results='$max_results'"
 }
 
 # display numbered list of options for user
@@ -114,8 +118,9 @@ filter_directories() {
 
 # Function to list most frequently visited directories with menu
 cdf() {
-	local n="${1:-100}"  # Number of records to consider, default to 100
 	local history_file="$HOME/.cd_history"
+	local history_depth="100"  # Number of records to consider
+	local max_results="15"
 	local options
 	options=$(parse_options "$@")
 	eval "$options"
@@ -127,11 +132,11 @@ cdf() {
 	fi
 
 	# Get the most frequently visited directories in the last N records
-	mapfile -t item < <(tail -n "$n" "$history_file" | sort | uniq -c | sort -nr | awk '{print $2}')
+	mapfile -t item < <(tail -n "$history_depth" "$history_file" | sort | uniq -c | sort -nr | awk '{print $2}')
 
 	# Apply filters
 	filtered_item=($(filter_directories "${item[@]}"))
-	mapfile -t filtered_item < <(printf '%s\n' "${filtered_item[@]}" | awk '{print $1 ":cd \"" $1 "\""}')
+	mapfile -t filtered_item < <(printf '%s\n' "${filtered_item[@]}" | head -n $max_results | awk '{print $1 ":cd \"" $1 "\""}')
 
 	if [ ${#filtered_item[@]} -eq 0 ]; then
 		echo "No matching directories found."
@@ -143,8 +148,9 @@ cdf() {
 
 # Function to list most recently visited directories with menu
 cdr() {
-	local n="${1:-100}"  # Number of records to consider, default to 100
 	local history_file="$HOME/.cd_history"
+	local history_depth="100"  # Number of records to consider
+	local max_results="15"
 	local options
 	options=$(parse_options "$@")
 	eval "$options"
@@ -156,11 +162,11 @@ cdr() {
 	fi
 
 	# Get the most recent directories visited in the last N records
-	mapfile -t item < <(tail -n "$n" "$history_file" | tac | awk '!seen[$0]++' | awk '{print $1}')
+	mapfile -t item < <(tail -n "$history_depth" "$history_file" | tac | awk '!seen[$0]++' | awk '{print $1}')
 
 	# Apply filters
 	filtered_item=($(filter_directories "${item[@]}"))
-	mapfile -t filtered_item < <(printf '%s\n' "${filtered_item[@]}" | awk '{print $1 ":cd \"" $1 "\""}')
+	mapfile -t filtered_item < <(printf '%s\n' "${filtered_item[@]}" | head -n $max_results | awk '{print $1 ":cd \"" $1 "\""}')
 
 	if [ ${#filtered_item[@]} -eq 0 ]; then
 		echo "No matching directories found."
@@ -189,7 +195,7 @@ goahead() {
 		echo "Usage: goahead -d <depth> [-r <regex>] [-c <regex>]"
 		return 1
 	fi
-	 echo "depth is $depth"
+	echo "depth is $depth"
 
 	# Recursively find directories up to the specified depth
 	for dir in $(find "$PWD" -maxdepth "$depth" -type d | sort); do
