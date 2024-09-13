@@ -2,7 +2,7 @@
 ## Introduction
 Functions to speed up and ease file system navigation in bash. A history of the directories you visit will be saved to a local file at `$HOME/.cd_history` to facilitate retrieval.
 
-Some of this code, especially the `menu` function which is used internally, was inspired by the book Pro Bash Programming by Chris F.A. Johnson.
+Some of this code, especially the `menu` function which is used internally, was adapted from the book Pro Bash Programming by Chris F.A. Johnson.
 
 ## Usage
 First source the file `navigation.sh` or add it to your .bashrc.
