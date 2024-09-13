@@ -119,7 +119,7 @@ filter_directories() {
 # Function to list most frequently visited directories with menu
 cdf() {
 	local history_file="$HOME/.cd_history"
-	local history_depth="100"  # Number of records to consider
+	local history_depth="250"  # Number of records to consider
 	local max_results="15"
 	local options
 	options=$(parse_options "$@")
@@ -149,7 +149,7 @@ cdf() {
 # Function to list most recently visited directories with menu
 cdr() {
 	local history_file="$HOME/.cd_history"
-	local history_depth="100"  # Number of records to consider
+	local history_depth="250"  # Number of records to consider
 	local max_results="15"
 	local options
 	options=$(parse_options "$@")
