@@ -38,7 +38,7 @@ parse_options() {
 # display numbered list of options for user
 menu() {
 	local IFS=$' \t\n' # Reset IFS to default setting
-	local num n=0 opt item cmd
+	local num n=1 opt item cmd
 
 	# Print the menu options
 	for item; do
@@ -261,5 +261,4 @@ gobehind() {
 		fi
 	done
 }
-
 
