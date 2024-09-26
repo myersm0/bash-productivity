@@ -1,10 +1,27 @@
 
 ## Introduction
+A collection of convenience funtions to improve productivity and reduce typing in bash, written by a developer with limited use of his hands.
+
+Source the files here from which you want to use the functions.
+
+### clip.sh
+Copy file contents to the system clipboard, optionally with a header. (Useful for collecting context to pass to generative AI.)
+
+#### Usage
+```
+# grab all text files and copy them to the system clipboard, each with a header (specified by `-h` here).
+find . | grep txt$ | clip -h
+
+# grab a few specific files and do the same, but also impose a line limit of 10 lines per file
+clip -h -n10 a.txt b.txt c.txx
+```
+
+### navigation.sh
 Functions to speed up and ease file system navigation in bash. A history of the directories you visit will be saved to a local file at `$HOME/.cd_history` to facilitate retrieval.
 
 Some of this code, especially the `menu` function which is used internally, was adapted from the book Pro Bash Programming by Chris F.A. Johnson.
 
-## Usage
+#### Usage
 First source the file `navigation.sh` or add it to your .bashrc.
 
 Three basic user-facing functions are then available to you:
