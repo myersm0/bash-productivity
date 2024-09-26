@@ -5,15 +5,18 @@ A collection of convenience funtions to improve productivity and reduce typing i
 Source the files here from which you want to use the functions.
 
 ### clip.sh
-Copy file contents to the system clipboard, optionally with a header. (Useful for collecting context to pass to generative AI.)
+Contains a user-facing function `clip` to copy file contents to the system clipboard, optionally with a header. (Useful for collecting context to pass to AI.)
 
 #### Usage
 ```
-# grab all text files and copy them to the system clipboard, each with a header (specified by `-h` here).
+# grab all txt files and copy them to the clipboard, each with a header (specified by `-h` here)
 find . | grep txt$ | clip -h
 
-# grab a few specific files and do the same, but also impose a line limit of 10 lines per file
-clip -h -n10 a.txt b.txt c.txx
+# grab a few specific files and do the same, but also impose a limit of 10 lines copied per file
+clip -h -n10 a.txt b.txt c.txt
+
+# similarly:
+clip -h -n10 *txt
 ```
 
 ### navigation.sh
