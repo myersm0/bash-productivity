@@ -1,6 +1,7 @@
 
 ## Introduction
-please 
+A collection of convenience funtions to improve productivity and reduce typing in bash.
+
 Source the files here from which you want to use the functions.
 
 ### clip.sh
