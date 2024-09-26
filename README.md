@@ -5,7 +5,7 @@ A collection of convenience funtions to improve productivity and reduce typing i
 Source the files here from which you want to use the functions.
 
 ### clip.sh
-Contains a user-facing function `clip` to copy file contents to the system clipboard, optionally with a header. (Useful for collecting context to pass to AI.)
+Contains a user-facing function `clip` to copy file contents to the system clipboard.
 
 #### Usage
 ```
