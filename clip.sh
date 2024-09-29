@@ -7,7 +7,6 @@ elif command -v pbcopy &> /dev/null; then
 	CLIP_CMD="pbcopy"
 else
 	echo "Clipboard command not found. Install 'xclip' on Linux or use 'pbcopy' on macOS."
-	exit 1
 fi
 
 cat_files_with_headers() {
