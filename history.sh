@@ -10,8 +10,8 @@ log_command() {
 	local current_dir="$PWD"
 	local command=$(history 1 | sed 's/^[ ]*[0-9]\+[ ]*//')
 
-	local current_dir_b64=$(printf '%s' "$current_dir" | base64)
-	local command_b64=$(printf '%s' "$command" | base64)
+	local current_dir_b64=$(printf '%s' "$current_dir" | base64 -w0)
+	local command_b64=$(printf '%s' "$command" | base64 -w0)
 
 	echo "$timestamp,$current_dir_b64,$command_b64" >> "$HOME/.bash_history_extended"
 }
