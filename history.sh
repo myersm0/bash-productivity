@@ -8,8 +8,7 @@ log_command() {
 
 	local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
 	local current_dir="$PWD"
-	local command
-	command=$(history 1 | sed 's/^[ ]*[0-9]\+[ ]*//')
+	local command=$(history 1 | sed 's/^[ ]*[0-9]\+[ ]*//')
 
 	local current_dir_b64=$(printf '%s' "$current_dir" | base64)
 	local command_b64=$(printf '%s' "$command" | base64)
