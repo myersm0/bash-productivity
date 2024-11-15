@@ -132,11 +132,17 @@ cdf() {
 	fi
 
 	# Get the most frequently visited directories in the last N records
-	mapfile -t item < <(tail -n "$history_depth" "$history_file" | sort | uniq -c | sort -nr | awk '{print $2}')
+	item=()
+	while IFS= read -r line; do
+		item+=("$line")
+	done < <(tail -n "$history_depth" "$history_file" | sort | uniq -c | sort -nr | awk '{print $2}')
 
 	# Apply filters
-	filtered_item=($(filter_directories "${item[@]}"))
-	mapfile -t filtered_item < <(printf '%s\n' "${filtered_item[@]}" | head -n $max_results | awk '{print $1 ":cd \"" $1 "\""}')
+	temp=($(filter_directories "${item[@]}"))
+	filtered_item=()
+	while IFS= read -r line; do
+		filtered_item+=("$line")
+	done < <(printf '%s\n' "${temp[@]}" | head -n "$max_results" | awk '{print $1 ":cd \"" $1 "\""}')
 
 	if [ ${#filtered_item[@]} -eq 0 ]; then
 		echo "No matching directories found."
@@ -162,11 +168,17 @@ cdr() {
 	fi
 
 	# Get the most recent directories visited in the last N records
-	mapfile -t item < <(tail -n "$history_depth" "$history_file" | tac | awk '!seen[$0]++' | awk '{print $1}')
+	item=()
+	while IFS= read -r line; do
+		item+=("$line")
+	done < <(tail -n "$history_depth" "$history_file" | tail -r | awk '!seen[$0]++' | awk '{print $1}')
 
 	# Apply filters
-	filtered_item=($(filter_directories "${item[@]}"))
-	mapfile -t filtered_item < <(printf '%s\n' "${filtered_item[@]}" | head -n $max_results | awk '{print $1 ":cd \"" $1 "\""}')
+	temp=($(filter_directories "${item[@]}"))
+	filtered_item=()
+	while IFS= read -r line; do
+		filtered_item+=("$line")
+	done < <(printf '%s\n' "${temp[@]}" | head -n "$max_results" | awk '{print $1 ":cd \"" $1 "\""}')
 
 	if [ ${#filtered_item[@]} -eq 0 ]; then
 		echo "No matching directories found."
@@ -237,7 +249,10 @@ gobehind() {
 		parent_dir=$(dirname "$current_dir")
 
 		# List directories in the parent directory
-		mapfile -t dirs < <(find "$parent_dir" -mindepth 1 -maxdepth 1 -type d | sort)
+		dirs=()
+		while IFS= read -r line; do
+			dirs+=("$line")
+		done < <(find "$parent_dir" -mindepth 1 -maxdepth 1 -type d | sort)
 
 		# Remove the current directory from the list
 		dirs=("${dirs[@]/$current_dir}")
