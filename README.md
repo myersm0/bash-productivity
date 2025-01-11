@@ -40,7 +40,7 @@ They provide several regex options as well. A few examples are below:
 
 ```
 # look ahead three levels deep but show only directories that contain txt files
-goahead -d 3 -c "\.txt$"
+goahead -d 3 -c "txt$"
 
 # out of the 100 most recently visited directories (by default),
 # show only the ones that have your current working directory as a prefix
@@ -54,7 +54,13 @@ cdr -r "my_regex"
 cdr -r "my_regex" -n 50
 ```
 
+### grab.sh
+Contains a function `grab` to find a file from your current directory (or up to `d` levels deep) and copy its full path to your system clipboard.
 
-
+#### Usage
+```
+# look ahead three levels deep for files ending in txt
+grab -d 3 -r "txt$"
+```
 
 
