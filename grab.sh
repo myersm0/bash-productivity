@@ -1,7 +1,7 @@
 #!/bin/bash
 
 grab_parse_options() {
-	local depth="1" regex="" include_hidden=false
+	local depth="1" regex="" include_hidden=false search_dir="$PWD"
 	while (( "$#" )); do
 		case "$1" in
 			-d)
@@ -15,22 +15,27 @@ grab_parse_options() {
 			-h)
 				include_hidden=true
 				;;
+			-f)
+				search_dir="$2"
+				shift
+				;;
 			*)
-				echo "Usage: grab_files -d <depth> -r <regex> [-h]"
+				echo "Usage: grab_files -d <depth> -r <regex> [-h] [-f <directory>]"
 				return 1
 				;;
 		esac
 		shift
 	done
-	eval "echo depth='$depth' regex='$regex' include_hidden='$include_hidden'"
+	eval "echo depth='$depth' regex='$regex' include_hidden='$include_hidden' search_dir='$search_dir'"
 }
 
 filter_files() {
 	local depth="$1"
 	local regex="$2"
 	local include_hidden="$3"
+	local searched_dir="$4"
 
-	local find_command=("find" "$PWD" "-maxdepth" "$depth" "-type" "f")
+	local find_command=("find" "$search_dir" "-maxdepth" "$depth" "-type" "f")
 	if [ "$include_hidden" == true ]; then
 		find_command+=(-path "*/.*/*" -o -name ".*")
 	else
