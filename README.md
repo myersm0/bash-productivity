@@ -1,6 +1,6 @@
 
 ## Introduction
-A collection of convenience funtions to reduce typing in bash. These are things I always wished I could do in bash, but was not motivated enough to implement until recently when I lost much of the use of my hands and had to find ways to become efficient at the terminal with as little typing (or voice commands via [Talon](https://talonvoice.com/) accessibility software) as possible.
+A collection of convenience funtions to reduce typing in bash. These are things I always wished I could do in bash, but was not motivated enough to implement until recently when I lost much of the use of my hands and had to find ways to become efficient at the terminal again with little ability to type.
 
 I consider the `navigation.sh` functions here to be by far the most valuable. Basically, with these functions, navigation around a filesystem in bash simplifies to entering a quick command and then selecting your destination from a menu. Your favorite and recent locations are remembered. This is invaluable if you often have to jump around a complicated filesystem with many, long paths.
 
