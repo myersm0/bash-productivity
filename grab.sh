@@ -104,9 +104,7 @@ grab() {
 	options=$(grab_parse_options "$@")
 	eval "$options"
 
-	echo "here we are"
 	files=($(filter_files "$depth" "$regex" "$include_hidden"))
-
 	if [ "${#files[@]}" -eq 0 ]; then
 		echo "No matching files found."
 		return 1
