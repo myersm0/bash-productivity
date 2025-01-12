@@ -38,7 +38,7 @@ filter_files() {
 	fi
 
 	"${find_command[@]}" | while read -r file; do
-		if [ -z "$regex" ] || [[ "$file" =~ $regex ]]; then
+		if [ -z "$regex" ] || [[ "$(basename $file)" =~ $regex ]]; then
 			echo "$file"
 		fi
 	done
