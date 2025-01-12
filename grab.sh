@@ -1,7 +1,7 @@
 #!/bin/bash
 
 grab_parse_options() {
-	local depth="1" regex=""
+	local depth="1" regex="" include_hidden=false
 	while (( "$#" )); do
 		case "$1" in
 			-d)
@@ -12,21 +12,32 @@ grab_parse_options() {
 				regex="$2"
 				shift
 				;;
+			-h)
+				include_hidden=true
+				;;
 			*)
-				echo "Usage: grab_files -d <depth> -r <regex>"
+				echo "Usage: grab_files -d <depth> -r <regex> [-h]"
 				return 1
 				;;
 		esac
 		shift
 	done
-	eval "echo depth='$depth' regex='$regex'"
+	eval "echo depth='$depth' regex='$regex' include_hidden='$include_hidden'"
 }
 
 filter_files() {
 	local depth="$1"
 	local regex="$2"
+	local include_hidden="$3"
 
-	find "$PWD" -maxdepth "$depth" -type f | while read -r file; do
+	local find_command=("find" "$PWD" "-maxdepth" "$depth" "-type" "f")
+	if [ "$include_hidden" == true ]; then
+		find_command+=(-path "*/.*/*" -o -name ".*")
+	else
+		find_command+=("!" -path "*/.*/*" "!" -name ".*")
+	fi
+
+	"${find_command[@]}" | while read -r file; do
 		if [ -z "$regex" ] || [[ "$file" =~ $regex ]]; then
 			echo "$file"
 		fi
@@ -82,14 +93,14 @@ copy_to_clipboard() {
 }
 
 grab() {
-	local depth="1" regex=""
+	local depth="1" regex="" include_hidden=false
 	local options files selection
 
 	options=$(grab_parse_options "$@")
 	eval "$options"
 
 	echo "here we are"
-	files=($(filter_files "$depth" "$regex"))
+	files=($(filter_files "$depth" "$regex" "$include_hidden"))
 
 	if [ "${#files[@]}" -eq 0 ]; then
 		echo "No matching files found."
