@@ -1,8 +1,19 @@
 
 ## Introduction
-A collection of convenience funtions to improve productivity and reduce typing in bash.
+A collection of convenience funtions to reduce typing in bash. These are things I always wished I could do in bash, but was not motivated enough to implement until recently when I lost much of the use of my hands and had to find ways to become efficient at the terminal with as little typing (or voice commands via [Talon](https://talonvoice.com/) accessibility software) as possible.
 
-Source the files here from which you want to use the functions.
+I consider the `navigation.sh` functions here to be by far the most valuable. Basically, with these functions, navigation around a filesystem in bash simplifies to entering a quick command and then selecting your destination from a menu. Your favorite and recent locations are remembered. This is invaluable if you often have to jump around a complicated filesystem with many, long paths.
+
+## Installation
+Source the files here from which you want to use the functions, for example:
+
+```
+git clone https://github.com/myersm0/bash-productivity
+cd bash-productivity
+source file_im_interested_in.sh # change name appropriately, or source all of them from your .bashrc
+```
+
+## Overview
 
 ### clip.sh
 Contains a user-facing function `clip` to copy file contents to the system clipboard.
