@@ -19,6 +19,18 @@ clip -h -n10 a.txt b.txt c.txt
 clip -h -n10 *txt
 ```
 
+### grab.sh
+Contains a function `grab` to find a file from your current directory (or up to `d` levels deep) and copy its full path to your system clipboard.
+
+#### Usage
+```
+# look up to three levels deep for files ending in txt
+grab -d 3 -r "txt$"
+
+# as above, but this time search from /dir/to/search instead of from your current directory
+grab -d 3 -r "txt$" -f /dir/to/search
+```
+
 ### navigation.sh
 Functions to speed up and ease file system navigation in bash. A history of the directories you visit will be saved to a local file at `$HOME/.cd_history` to facilitate retrieval.
 
@@ -54,13 +66,5 @@ cdr -r "my_regex"
 cdr -r "my_regex" -n 50
 ```
 
-### grab.sh
-Contains a function `grab` to find a file from your current directory (or up to `d` levels deep) and copy its full path to your system clipboard.
-
-#### Usage
-```
-# look ahead three levels deep for files ending in txt
-grab -d 3 -r "txt$"
-```
 
 
