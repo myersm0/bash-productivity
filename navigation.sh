@@ -171,7 +171,12 @@ cdr() {
 	item=()
 	while IFS= read -r line; do
 		item+=("$line")
-	done < <(tail -n "$history_depth" "$history_file" | tail -r | awk '!seen[$0]++' | awk '{print $1}')
+	done < <(
+		tail -n "$history_depth" "$history_file" |
+		sed '1!G;h;$!d' |
+		awk '!seen[$0]++' |
+		awk '{print $1}'
+	)
 
 	# Apply filters
 	temp=($(filter_directories "${item[@]}"))
